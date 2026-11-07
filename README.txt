@@ -26,3 +26,5 @@ overlapping functionality. Original RedsUI project files remain unchanged.
 1.2.1: Quest pickup pins have a subtle amber halo that pulses while visible, on both the world map and journal dungeon maps. The icon itself stays steady.
 
 1.2.2: Both quest pickup map views now use the same custom amber arrow with a red center stripe, dark outline, gentle vertical bounce and brighter pulsing halo.
+
+1.2.3: OpenMap compatibility: pickup markers use its stitched coordinate projection, sit above its artwork and keep their display size across zoom changes.

@@ -19,6 +19,11 @@ function A.ShowOnMap(at,title,who)
  if M.frame then M.frame:Hide() end
  if ShowUIPanel then ShowUIPanel(WorldMapFrame) else WorldMapFrame:Show() end
  if WorldMapFrame.SetMapID then WorldMapFrame:SetMapID(at[1]) end
+ local api=_G.OpenMapAPI
+ if api and api.IsStitched and api.IsStitched() and api.WorldFromMap and api.ShowWorld then
+  local u,v=api.WorldFromMap(at[1],at[2],at[3])
+  if u and v then api.ShowWorld(u,v) end
+ end
  if C_Map and C_Map.SetUserWaypoint and UiMapPoint and UiMapPoint.CreateFromCoordinates then
   pcall(function() C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(at[1],at[2],at[3])) end)
  end
@@ -79,15 +84,35 @@ local function Update()
  local canvas=WorldMapFrame.GetCanvas and WorldMapFrame:GetCanvas() or WorldMapFrame.ScrollContainer and WorldMapFrame.ScrollContainer.Child
  if not canvas then return end
  local mapID=WorldMapFrame.GetMapID and WorldMapFrame:GetMapID()
+ local api=_G.OpenMapAPI
+ local stitched=api and api.IsStitched and api.IsStitched()
+ local top=stitched and api.ArtTopLevel and api.ArtTopLevel() or 0
+ local level=math.max(canvas:GetFrameLevel()+30,(tonumber(top) or 0)+10)
+ local scroll=WorldMapFrame.ScrollContainer
+ local scale=scroll and scroll.GetCanvasScale and scroll:GetCanvasScale() or 1
+ if not scale or scale<=0 then scale=1 end
  for key,t in pairs(M.db.journalPins or {}) do
+  local x,y=t.x,t.y
+  local visible=t.map==mapID
+  if stitched then
+   visible=false
+   if api.WorldFromMap and api.MapFromWorld then
+    local u,v=api.WorldFromMap(t.map,t.x,t.y)
+    if u and v then x,y=api.MapFromWorld(mapID,u,v);visible=x~=nil and y~=nil end
+   end
+  end
   local p=pins[key];if not p then p=Marker(canvas);pins[key]=p end
   p.key,p.title,p.who=key,t.title,t.who;p:SetParent(canvas)
-  p:ClearAllPoints();p:SetPoint("BOTTOM",canvas,"TOPLEFT",t.x*canvas:GetWidth(),-t.y*canvas:GetHeight());p:SetShown(t.map==mapID)
+  if not InCombatLockdown() then p:SetFrameLevel(level) end
+  p:SetScale(1/scale)
+  if visible then p:ClearAllPoints();p:SetPoint("BOTTOM",canvas,"TOPLEFT",x*canvas:GetWidth(),-y*canvas:GetHeight()) end
+  p:SetShown(visible)
  end
  for key,p in pairs(pins) do if not M.db.journalPins[key] then p:Hide() end end
 end
+
 local function EnsureWatcher()
- if WorldMapFrame and not watcher then watcher=CreateFrame("Frame",nil,WorldMapFrame);local elapsed=0;watcher:SetScript("OnUpdate",function(_,dt) elapsed=elapsed+dt;if elapsed>.15 then elapsed=0;Update() end end) end
+ if WorldMapFrame and not watcher then watcher=CreateFrame("Frame","RedsQOLMapPinWatcher",WorldMapFrame);local elapsed=0;watcher:SetScript("OnUpdate",function(_,dt) elapsed=elapsed+dt;if elapsed>.15 then elapsed=0;Update() end end) end
 end
 function A.ShowOnMap(at,title,who)
  if not at then M:Say("No pickup location has been mapped yet.");return end
@@ -100,6 +125,11 @@ function A.ShowOnMap(at,title,who)
  if M.frame then M.frame:Hide() end
  if ShowUIPanel then ShowUIPanel(WorldMapFrame) else WorldMapFrame:Show() end
  if WorldMapFrame.SetMapID then WorldMapFrame:SetMapID(at[1]) end
+ local api=_G.OpenMapAPI
+ if api and api.IsStitched and api.IsStitched() and api.WorldFromMap and api.ShowWorld then
+  local u,v=api.WorldFromMap(at[1],at[2],at[3])
+  if u and v then api.ShowWorld(u,v) end
+ end
  EnsureWatcher()
  Update()
 end
