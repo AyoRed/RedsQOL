@@ -132,3 +132,29 @@ function RedsQOL.UI.AddPinPulse(pin)
  pin:HookScript("OnHide",function() pulse:Stop() end)
  pulse:Play()
 end
+-- One distinct Reds QOL marker on both maps: outlined amber arrow and bright halo.
+function RedsQOL.UI.StyleQuestPin(pin)
+ pin:SetSize(34,42)
+ local arrow=CreateFrame("Frame",nil,pin);arrow:SetSize(28,32);arrow:SetPoint("BOTTOM",0,4)
+ local white="Interface\\Buttons\\WHITE8X8"
+ local function Stroke(layer,x1,y1,x2,y2,width,r,g,b)
+  local t=arrow:CreateLine(nil,layer);t:SetTexture(white);t:SetVertexColor(r,g,b,1);t:SetThickness(width)
+  t:SetStartPoint("CENTER",arrow,x1,y1);t:SetEndPoint("CENTER",arrow,x2,y2)
+ end
+ Stroke("BACKGROUND",0,18,0,-9,10,.06,.025,.01)
+ Stroke("BACKGROUND",-11,0,0,-11,10,.06,.025,.01)
+ Stroke("BACKGROUND",11,0,0,-11,10,.06,.025,.01)
+ Stroke("ARTWORK",0,18,0,-9,6,1,.66,.12)
+ Stroke("ARTWORK",-11,0,0,-11,6,1,.66,.12)
+ Stroke("ARTWORK",11,0,0,-11,6,1,.66,.12)
+ -- Small red center stripe identifies the marker as Red's without obscuring the arrow.
+ Stroke("OVERLAY",0,15,0,6,2,.9,.2,.06)
+ local halo=pin:CreateTexture(nil,"BACKGROUND");halo:SetTexture("Interface\\AddOns\\RedsQOL\\Media\\Ring");halo:SetSize(50,50);halo:SetPoint("BOTTOM",0,-4);halo:SetVertexColor(1,.65,.12);halo:SetBlendMode("ADD")
+ local pulse=halo:CreateAnimationGroup();pulse:SetLooping("BOUNCE")
+ local fade=pulse:CreateAnimation("Alpha");fade:SetFromAlpha(.35);fade:SetToAlpha(1);fade:SetDuration(.65);fade:SetSmoothing("IN_OUT")
+ local bounce=arrow:CreateAnimationGroup();bounce:SetLooping("BOUNCE")
+ local move=bounce:CreateAnimation("Translation");move:SetOffset(0,8);move:SetDuration(.6);move:SetSmoothing("IN_OUT")
+ pin:HookScript("OnShow",function() pulse:Play();bounce:Play() end)
+ pin:HookScript("OnHide",function() pulse:Stop();bounce:Stop() end)
+ pulse:Play();bounce:Play()
+end
