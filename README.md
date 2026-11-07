@@ -17,7 +17,7 @@ A quality-of-life addon for WoW Forever by Red, with a dark brown and amber sett
 Use Red's UI Updater to install or update Reds QOL automatically:
 https://github.com/AyoRed/RedsUI/releases/latest
 
-For manual installation, download `RedsQOL-1.2.4.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
+For manual installation, download `RedsQOL-1.3.4.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
 
 ## Controls
 
@@ -32,3 +32,4 @@ Movers are visible only while unlocked. QOL placement does not edit Blizzard or 
 Campfire settings are imported on first use when the standalone Reds Campfire Buffs addon is enabled. Disable the original full RedsUI to avoid overlapping functionality.
 
 Bundled sound credits are retained in `Sounds.lua`. This project does not grant redistribution rights beyond those of its respective authors.
+

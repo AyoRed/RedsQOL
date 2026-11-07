@@ -2,7 +2,7 @@
 ## Title: Reds QOL
 ## Notes: Quality of life: attack range, mouse cursor, loot sparkles, trainer spells, campfire, top bar and frame movers.
 ## Author: Red
-## Version: 1.2.4
+## Version: 1.3.4
 ## SavedVariables: RedsQOLDB
 ## OptionalDeps: RedsCampfireBuffs
 ## IconTexture: Interface\AddOns\RedsQOL\Media\CampFire
