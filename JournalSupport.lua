@@ -68,6 +68,7 @@ local pins={};local watcher
 local function Marker(parent)
  local b=CreateFrame("Button",nil,parent);b:SetSize(28,34);b:SetFrameStrata("HIGH")
  local tex=b:CreateTexture(nil,"OVERLAY");tex:SetAllPoints();tex:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
+ M.UI.AddPinPulse(b)
  b:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_RIGHT");GameTooltip:AddLine(self.title or "Quest pickup",1,.7,.3);GameTooltip:AddLine(self.who or "",1,1,1);GameTooltip:AddLine("Right-click to remove this pin",.7,.7,.7);GameTooltip:Show() end)
  b:SetScript("OnLeave",function() GameTooltip:Hide() end)
  b:RegisterForClicks("RightButtonUp");b:SetScript("OnClick",function(self) M.db.journalPins[self.key]=nil;self:Hide() end)

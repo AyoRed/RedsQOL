@@ -121,3 +121,14 @@ end
 M.extraMovables.reload={frame=function() return button and button:IsShown() and button end,save=function(x,y) M.db.reloadPos={x=x,y=y};Place() end}
 local ev=CreateFrame("Frame");ev:RegisterEvent("PLAYER_LOGIN");ev:RegisterEvent("PLAYER_REGEN_ENABLED");ev:SetScript("OnEvent",function() M:ApplyReloadButton() end)
 end
+
+-- Only the amber halo fades; the quest icon remains readable throughout the pulse.
+function RedsQOL.UI.AddPinPulse(pin)
+ local halo=pin:CreateTexture(nil,"BACKGROUND")
+ halo:SetTexture("Interface\\AddOns\\RedsQOL\\Media\\Ring");halo:SetSize(38,38);halo:SetPoint("CENTER",0,-2);halo:SetVertexColor(1,.6,.15);halo:SetAlpha(.2)
+ local pulse=halo:CreateAnimationGroup();pulse:SetLooping("BOUNCE")
+ local fade=pulse:CreateAnimation("Alpha");fade:SetFromAlpha(.2);fade:SetToAlpha(.65);fade:SetDuration(.85);fade:SetSmoothing("IN_OUT")
+ pin:HookScript("OnShow",function() pulse:Play() end)
+ pin:HookScript("OnHide",function() pulse:Stop() end)
+ pulse:Play()
+end

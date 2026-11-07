@@ -22,3 +22,5 @@ overlapping functionality. Original RedsUI project files remain unchanged.
 1.1.1: Added the missing Ruins of Lordaeron quests (six Horde, four Alliance), item-started quests, rewards, pickup details and Horde prerequisite chains.
 
 1.2.0: Expand any quest to see its required steps, givers and clickable map actions. Pin pickup locations on the existing Blizzard map; right-click a pin to remove it. Multiple pins are saved. Item-started quests use the dungeon map, with exact markers only where known. Optional breadcrumbs are no longer treated as required; Hidden Enemies is added to RFC.
+
+1.2.1: Quest pickup pins have a subtle amber halo that pulses while visible, on both the world map and journal dungeon maps. The icon itself stays steady.

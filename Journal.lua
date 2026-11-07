@@ -603,7 +603,7 @@ end
 function J.PinPickup(at,title,who)
  Menu:Open("journal");J.Select(at.dungeon);J.SetTab("map");pickupTarget=at
  if not ui.pickupPin then
-  ui.pickupPin=CreateFrame("Frame",nil,ui.art);ui.pickupPin:SetSize(26,34);ui.pickupPin:SetFrameLevel(ui.art:GetFrameLevel()+12)
+  ui.pickupPin=CreateFrame("Frame",nil,ui.art);ui.pickupPin:SetSize(26,34);ui.pickupPin:SetFrameLevel(ui.art:GetFrameLevel()+12);Menu.UI.AddPinPulse(ui.pickupPin)
   local icon=ui.pickupPin:CreateTexture(nil,"OVERLAY");icon:SetAllPoints();icon:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
   ui.pickupLabel=Text(ui.mapFrame,"",12,AMBER);ui.pickupLabel:SetPoint("TOPLEFT",4,0);ui.pickupLabel:SetPoint("TOPRIGHT",-4,0);ui.pickupLabel:SetJustifyH("LEFT");ui.pickupLabel:SetWordWrap(true)
  end
