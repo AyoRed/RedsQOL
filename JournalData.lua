@@ -225,3 +225,35 @@ A.DungeonMapData = {
 		},
 	},
 }
+-- Ruins quest IDs, factions, levels, reward IDs and pickup locations checked against
+-- the installed ForeverDungeonJournal data; objectives restated for Reds QOL.
+-- Horde prerequisite chains also checked against the current Wowhead quest update.
+local RUINS_QUESTS={
+ {id=95250,name="Abominable Creatures",level=21,min=16,side="Alliance",giver="Captain Truman",where="Inside the dungeon, beside the entrance",
+  goal="Defeat The Baron and take his head back to Captain Truman at the entrance.",rewards={279864,279865,279867}},
+ {id=97288,name="Unending Torment",level=21,min=16,side="Horde",item="Abominable Head, looted from The Baron",
+  goal="Bring the head to Master Apothecary Faranell in Undercity. The equipment choices come from a later step of this chain.",ends={"Master Apothecary Faranell",{1458,.488,.693}}},
+ {id=92401,name="A Frightened Request",level=22,min=15,side="Horde",giver="Tabitha Heartweaver",at={1421,.445,.430},
+  goal="Search the ruins for Edward Heartweaver, then return to Tabitha at the Sepulcher.",rewards={251485,251486}},
+ {id=95195,name="Bloodied Insignia",level=22,min=16,side="Alliance",item="Bloodied Insignia, dropped by undead inside the dungeon",
+  goal="Gather 10 insignias from the dungeon's undead and deliver them to General Marcus Jonathan in Stormwind.",ends={"General Marcus Jonathan",nil,"Stormwind City"},rewards={279868,279869}},
+ {id=95189,name="Crest of Lordaeron",level=22,min=16,side="Alliance",item="Crest of Lordaeron, found inside the dungeon",
+  goal="Look for the crest in the dungeon's rooms and towers; its location can vary. Deliver it to Lady Dena Kennedy in Stormwind.",ends={"Lady Dena Kennedy",nil,"Stormwind City"},rewards={280567}},
+ {id=95204,name="Crest of Lordaeron",level=22,min=16,side="Horde",item="Crest of Lordaeron, found inside the dungeon",
+  goal="Find the crest inside the ruins and bring it to Oran Snakewrithe in Undercity. Its spawn location varies.",ends={"Oran Snakewrithe",nil,"Undercity"},rewards={280567}},
+ {id=92421,name="Light's Justice",level=22,min=15,side="Horde",giver="Morbin Lightbane",at={1458,.579,.895},
+  goal="Collect 25 Intact Limbs from the ruins for Morbin Lightbane in Undercity.",rewards={279874,279875}},
+ {id=92415,name="Remember That I Love You",level=22,min=15,side="Alliance",item="Blood-Stained Letter, found in the dungeon graveyard",
+  goal="Take the letter from the graveyard to Orphan Matron Nightingale in Stormwind.",ends={"Orphan Matron Nightingale",nil,"Stormwind City"},rewards={279870}},
+ {id=95216,name="The New Plague",level=22,min=16,side="Horde",giver="Theodore Griffs",at={1458,.465,.716},
+  goal="Retrieve the Highly Toxic Strain from Witherfang for Theodore Griffs. First finish the three A Recipe For Death quests.",rewards={279876,279877},
+  pre={{447,"A Recipe For Death","Apothecary Renferrel",{1421,.428,.409}},
+       {450,"A Recipe For Death","Master Apothecary Faranell",{1458,.488,.693}},
+       {451,"A Recipe For Death","Apothecary Renferrel",{1421,.428,.409}}}},
+ {id=92422,name="The Wrath of Rath'mael",level=22,min=15,side="Horde",giver="Deathguard Kristof",at={1420,.652,.602},
+  goal="Defeat Rath'mael and report to Deathguard Kristof. First finish Linnea's two Rear Guard Patrol quests.",rewards={251533,251534},
+  pre={{356,"Rear Guard Patrol","Deathguard Linnea",{1420,.655,.603}},
+       {99156,"Rear Guard Patrol","Deathguard Linnea",{1420,.655,.603}}}}
+}
+
+A.DungeonMapData[2999].quests=RUINS_QUESTS

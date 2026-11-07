@@ -18,3 +18,5 @@ The Reload UI button can be positioned with the other QOL displays.
 Source and downloads: https://github.com/AyoRed/RedsQOL
 Bundled sound credits are retained in Sounds.lua. Disable full RedsUI to avoid
 overlapping functionality. Original RedsUI project files remain unchanged.
+
+1.1.1: Added the missing Ruins of Lordaeron quests (six Horde, four Alliance), item-started quests, rewards, pickup details and Horde prerequisite chains.
