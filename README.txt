@@ -28,3 +28,5 @@ overlapping functionality. Original RedsUI project files remain unchanged.
 1.2.2: Both quest pickup map views now use the same custom amber arrow with a red center stripe, dark outline, gentle vertical bounce and brighter pulsing halo.
 
 1.2.3: OpenMap compatibility: pickup markers use its stitched coordinate projection, sit above its artwork and keep their display size across zoom changes.
+
+1.2.4: Pickup coordinates now use an unscaled canvas anchor separate from the arrow's zoom scaling. Only the selected pickup is marked; old saved pins are cleared once. A fixed dot and smaller halo identify the actual location while the arrow bounces above it.

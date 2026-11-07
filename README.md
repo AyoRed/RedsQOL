@@ -17,7 +17,7 @@ A quality-of-life addon for WoW Forever by Red, with a dark brown and amber sett
 Use Red's UI Updater to install or update Reds QOL automatically:
 https://github.com/AyoRed/RedsUI/releases/latest
 
-For manual installation, download `RedsQOL-1.2.3.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
+For manual installation, download `RedsQOL-1.2.4.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
 
 ## Controls
 

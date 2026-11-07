@@ -102,10 +102,15 @@ local function Update()
    end
   end
   local p=pins[key];if not p then p=Marker(canvas);pins[key]=p end
-  p.key,p.title,p.who=key,t.title,t.who;p:SetParent(canvas)
+  if not p.mapAnchor then p.mapAnchor=CreateFrame("Frame",nil,canvas);p.mapAnchor:SetSize(1,1) end
+  p.mapAnchor:SetParent(canvas);p:SetParent(p.mapAnchor)
+  p.key,p.title,p.who=key,t.title,t.who
   if not InCombatLockdown() then p:SetFrameLevel(level) end
   p:SetScale(1/scale)
-  if visible then p:ClearAllPoints();p:SetPoint("BOTTOM",canvas,"TOPLEFT",x*canvas:GetWidth(),-y*canvas:GetHeight()) end
+  if visible then
+   p.mapAnchor:ClearAllPoints();p.mapAnchor:SetPoint("TOPLEFT",canvas,"TOPLEFT",x*canvas:GetWidth(),-y*canvas:GetHeight())
+   p:ClearAllPoints();p:SetPoint("BOTTOM",p.mapAnchor,"TOPLEFT",0,0)
+  end
   p:SetShown(visible)
  end
  for key,p in pairs(pins) do if not M.db.journalPins[key] then p:Hide() end end
@@ -116,12 +121,12 @@ local function EnsureWatcher()
 end
 function A.ShowOnMap(at,title,who)
  if not at then M:Say("No pickup location has been mapped yet.");return end
- if at.dungeon then M.Journal.PinPickup(at,title,who);return end
+ if at.dungeon then M:Initialize();M.db.journalPins={};Update();M.Journal.PinPickup(at,title,who);return end
  if not WorldMapFrame and C_AddOns and C_AddOns.LoadAddOn then pcall(C_AddOns.LoadAddOn,"Blizzard_WorldMap") end
  if not WorldMapFrame then M:Say("The world map is unavailable.");return end
  M:Initialize();M.db.journalPins=M.db.journalPins or {}
  local key=at[1]..":"..string.format("%.4f:%.4f",at[2],at[3])..":"..(title or "")
- M.db.journalPins[key]={map=at[1],x=at[2],y=at[3],title=title,who=who}
+ M.db.journalPins={[key]={map=at[1],x=at[2],y=at[3],title=title,who=who}}
  if M.frame then M.frame:Hide() end
  if ShowUIPanel then ShowUIPanel(WorldMapFrame) else WorldMapFrame:Show() end
  if WorldMapFrame.SetMapID then WorldMapFrame:SetMapID(at[1]) end
@@ -134,5 +139,5 @@ function A.ShowOnMap(at,title,who)
  Update()
 end
 local login=CreateFrame("Frame");login:RegisterEvent("PLAYER_LOGIN");login:RegisterEvent("ADDON_LOADED");login:SetScript("OnEvent",function(_,event,name)
- if event=="PLAYER_LOGIN" or name=="Blizzard_WorldMap" then M:Initialize();M.db.journalPins=M.db.journalPins or {};EnsureWatcher() end
+ if event=="PLAYER_LOGIN" or name=="Blizzard_WorldMap" then M:Initialize();if not M.db.journalPinAnchorV2 then M.db.journalPins={};M.db.journalPinAnchorV2=true end;M.db.journalPins=M.db.journalPins or {};EnsureWatcher() end
 end)
