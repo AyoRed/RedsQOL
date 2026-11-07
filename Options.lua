@@ -1,5 +1,5 @@
 local M=RedsQOL
-local sections={{"range","Attack range"},{"cursor","Mouse cursor"},{"sparkles","Loot sparkles"},{"trainer","Trainer spells"},{"campfire","Campfire"},{"topbar","Top bar"},{"mover","Move frames"}}
+local sections={{"range","Attack range"},{"cursor","Mouse cursor"},{"sparkles","Loot sparkles"},{"trainer","Trainer spells"},{"campfire","Campfire"},{"topbar","Top bar"},{"mover","Move frames"},{"journal","Dungeon journal"}}
 local panel,scroll,content,current,rows
 local function Get(path)
  local value=M:QoLSettings();for key in path:gmatch("[^.]+") do value=value[key] end;return value
@@ -14,6 +14,17 @@ local function Changed(rebuild)
 end
 Draw=function(key)
  current=key
+ if key=="journal" then
+  panel:SetWidth(1120);panel.sectionTitle:SetText("Dungeon journal");scroll:Hide()
+  if not panel.journal then
+   panel.journal=CreateFrame("Frame",nil,panel);panel.journal:SetPoint("TOPLEFT",212,-130);panel.journal:SetPoint("BOTTOMRIGHT",-20,44);panel.journal:Hide()
+   M:BuildJournalPage(panel.journal)
+  end
+  panel.journal:Show()
+  for k,b in pairs(panel.tabs) do b:SetBackdropBorderColor(unpack(k==key and {1,.65,.25,1} or {.4,.24,.12,1})) end
+  return
+ end
+ panel:SetWidth(780);scroll:Show();if panel.journal then panel.journal:Hide() end
  for _,f in ipairs(rows or {}) do f:Hide();f:SetParent(nil) end;rows={}
  local spec=key=="mover" and M.Mover.Spec() or M.QOLSpecs[key]
  panel.sectionTitle:SetText(spec.title);scroll:SetVerticalScroll(0)
@@ -79,7 +90,7 @@ local function Open(key)
  local hint=M.UI.Text(panel,"Minimap: left-click settings | right-click unlock / lock QOL displays",11,M.UI.MUTED);hint:SetPoint("BOTTOMLEFT",218,18)
  Draw(key or "campfire")
 end
-M.OpenOptions=Open
+M.OpenOptions=Open;function M:Open(key) Open(key) end
 function M:RefreshQoLPage() end
 SLASH_REDSQOL1="/rqol";SLASH_REDSQOL2="/redsqol"
 SlashCmdList.REDSQOL=function(msg) if (msg or ""):lower()=="move" then M:ToggleMove() else Open() end end

@@ -1,0 +1,61 @@
+-- The journal's data helpers only; no world-map replacement or edit-mode hooks.
+local _,ns=...
+local M=RedsQOL
+local A={Caps={forever=M.IsForever()}}
+ns.Atlas=A;M.JournalAtlas=A
+function A.LevelColour(level)
+ if GetQuestDifficultyColor and level then local c=GetQuestDifficultyColor(level);if c then return c.r,c.g,c.b end end
+ return 1,.7,.3
+end
+A.PlaceData={dungeons={
+ {1,0,0,false,43,"Wailing Caverns",17,24},
+ {1,0,0,false,389,"Ragefire Chasm",13,18}},foreverDungeons={
+ {1458,.725,.114,2999,"Ruins of Lordaeron",15,20},
+ {1455,.277,.479,3065,"The Hall of Thanes",13,18}}}
+function A.ShowOnMap(at,title,who)
+ if not at then return end
+ if not WorldMapFrame and C_AddOns and C_AddOns.LoadAddOn then pcall(C_AddOns.LoadAddOn,"Blizzard_WorldMap") end
+ if not WorldMapFrame then M:Say("The world map is unavailable.");return end
+ if M.frame then M.frame:Hide() end
+ if ShowUIPanel then ShowUIPanel(WorldMapFrame) else WorldMapFrame:Show() end
+ if WorldMapFrame.SetMapID then WorldMapFrame:SetMapID(at[1]) end
+ if C_Map and C_Map.SetUserWaypoint and UiMapPoint and UiMapPoint.CreateFromCoordinates then
+  pcall(function() C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(at[1],at[2],at[3])) end)
+ end
+end
+local function GuideText(s)
+	if type(s) ~= "string" then return "" end
+	s = s:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|T[^|]*|t", ""):gsub("%$bullet", ""):gsub("%$[%w_]+", ""):gsub("%s+", " ")
+	s = s:match("^%s*(.-)%s*$") or ""
+	if #s > 260 then s = s:sub(1, 257) .. "..." end
+	return s
+end
+local function ReadGuide(encounterID)
+	if C_AddOns and C_AddOns.LoadAddOn then pcall(C_AddOns.LoadAddOn, "Blizzard_EncounterJournal") end
+	if not EJ_GetEncounterInfo then return nil end
+	local ok, _, _, _, root = pcall(EJ_GetEncounterInfo, encounterID)
+	if not ok or type(root) ~= "number" or root <= 0 then return nil end
+	local get = (C_EncounterJournal and C_EncounterJournal.GetSectionInfo) or EJ_GetSectionInfo
+	if not get then return nil end
+	local out = {}
+	local function Walk(id, depth)
+		local guard = 0
+		while id and id > 0 and guard < 60 and #out < 14 do
+			guard = guard + 1
+			local good, s = pcall(get, id)
+			if not good or type(s) ~= "table" then return end
+			local title = GuideText(s.title)
+			if title ~= "" then out[#out + 1] = { title, (type(s.spellID) == "number" and s.spellID > 0) and s.spellID or nil, GuideText(s.description) } end
+			if s.firstChildSectionID and depth < 4 then Walk(s.firstChildSectionID, depth + 1) end
+			id = s.siblingSectionID
+		end
+	end
+	Walk(root, 0)
+	return #out > 0 and out or nil
+end
+function A.BossAbilities(b)
+	if b.abilities then return b.abilities end
+	if b.encounter and not b.guideTried then b.guideTried = true; b.abilities = ReadGuide(b.encounter) end
+	return b.abilities or {}
+end
+

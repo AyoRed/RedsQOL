@@ -6,6 +6,7 @@ A quality-of-life addon for WoW Forever by Red, with a dark brown and amber sett
 - Cursor rings and animated trails.
 - Loot sparkles for quest objects, herbs, ore and lootable corpses.
 - Trainer spell lists and level-up reminders.
+- Themed dungeon journal with quests, boss abilities, loot and maps for four dungeons.
 - Campfire reminders, bonus tracking, timer ring and warning sounds.
 - Customizable top bar with clock, FPS/latency and shortcuts.
 - Movable QOL displays and a one-click Reload UI button.
@@ -16,12 +17,13 @@ A quality-of-life addon for WoW Forever by Red, with a dark brown and amber sett
 Use Red's UI Updater to install or update Reds QOL automatically:
 https://github.com/AyoRed/RedsUI/releases/latest
 
-For manual installation, download `RedsQOL-1.0.4.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
+For manual installation, download `RedsQOL-1.1.0.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
 
 ## Controls
 
 - `/rqol` or left-click the minimap button: settings.
 - Right-click the minimap button or choose **Unlock & move QOL displays**: position Campfire, Top Bar, Range Warning and Reload UI. Click **Lock position** when finished.
+- `/rjournal`: dungeon journal (also available as a section in settings).
 - `/rtrainer`: trainer spell list.
 - `/rcamp`: Campfire settings.
 
