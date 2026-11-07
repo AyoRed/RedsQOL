@@ -257,3 +257,41 @@ local RUINS_QUESTS={
 }
 
 A.DungeonMapData[2999].quests=RUINS_QUESTS
+
+-- Required chains and pickup facts checked against the installed Forever quest records.
+do
+local byID={}
+for instance,d in pairs(A.DungeonMapData) do for _,q in ipairs(d.quests or {}) do byID[q.id]=q;q.dungeon=instance end end
+byID[96403].at={1455,.435,.520};byID[96394].at={1455,.333,.481};byID[96393].at={1426,.647,.584}
+byID[914].at={1456,.753,.313};byID[5761].at={1454,.496,.506}
+for _,q in pairs(byID) do
+ if q.giver=="Rahauro" then q.at={1456,.704,.322} end
+ for _,s in ipairs(q.pre or {}) do if s[3]=="Rahauro" then s[4]={1456,.704,.322} end end
+end
+-- Optional breadcrumbs are not mandatory prerequisites.
+byID[914].pre={{870,"The Forgotten Pools","Tonga Runetotem",{1413,.520,.320}},
+ {877,"The Stagnant Oasis","Tonga Runetotem",{1413,.520,.320}},
+ {880,"Altered Beings","Tonga Runetotem",{1413,.520,.320}},
+ {1489,"Hamuul Runetotem","Tonga Runetotem",{1413,.520,.320}},
+ {1490,"Nara Wildmane","Hamuul Runetotem",{1456,.786,.286}}}
+byID[96393].pre={{96391,"Underground Map","Dark Iron Map dropped by Dark Iron Spies",{1426,.770,.600}}}
+byID[5761].pre=nil
+-- Hidden Enemies is the separate dungeon quest; it was missing from the original journal.
+if not byID[5728] then
+ local q={id=5728,name="Hidden Enemies",level=16,min=9,side="Horde",giver="Thrall",at={1454,.320,.378},
+  goal="Defeat Jergosh the Invoker and Bazzalan in Ragefire Chasm, then return to Thrall.",
+  pre={{5726,"Hidden Enemies","Thrall",{1454,.320,.378}},{5727,"Hidden Enemies","Thrall",{1454,.320,.378}}},dungeon=389}
+ table.insert(A.DungeonMapData[389].quests,q);byID[q.id]=q
+end
+-- Item-started quests inside a dungeon use that dungeon's map, not a fabricated world coordinate.
+for instance,d in pairs(A.DungeonMapData) do
+ for _,q in ipairs(d.quests or {}) do
+  if not q.at then
+   q.pickup={dungeon=instance}
+   if q.item then for _,boss in ipairs(d.bosses or {}) do
+    if q.item:find(boss.name,1,true) and boss.x and boss.y then q.pickup={dungeon=instance,x=boss.x,y=boss.y} end
+   end end
+  end
+ end
+end
+end

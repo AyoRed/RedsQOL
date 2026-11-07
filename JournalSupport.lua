@@ -59,3 +59,49 @@ function A.BossAbilities(b)
 	return b.abilities or {}
 end
 
+
+-- QOL-owned pins on the existing Blizzard canvas. Native waypoint support is optional.
+local _,ns=...
+local A=ns.Atlas
+local M=RedsQOL
+local pins={};local watcher
+local function Marker(parent)
+ local b=CreateFrame("Button",nil,parent);b:SetSize(28,34);b:SetFrameStrata("HIGH")
+ local tex=b:CreateTexture(nil,"OVERLAY");tex:SetAllPoints();tex:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
+ b:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_RIGHT");GameTooltip:AddLine(self.title or "Quest pickup",1,.7,.3);GameTooltip:AddLine(self.who or "",1,1,1);GameTooltip:AddLine("Right-click to remove this pin",.7,.7,.7);GameTooltip:Show() end)
+ b:SetScript("OnLeave",function() GameTooltip:Hide() end)
+ b:RegisterForClicks("RightButtonUp");b:SetScript("OnClick",function(self) M.db.journalPins[self.key]=nil;self:Hide() end)
+ return b
+end
+local function Update()
+ if not WorldMapFrame then return end
+ local canvas=WorldMapFrame.GetCanvas and WorldMapFrame:GetCanvas() or WorldMapFrame.ScrollContainer and WorldMapFrame.ScrollContainer.Child
+ if not canvas then return end
+ local mapID=WorldMapFrame.GetMapID and WorldMapFrame:GetMapID()
+ for key,t in pairs(M.db.journalPins or {}) do
+  local p=pins[key];if not p then p=Marker(canvas);pins[key]=p end
+  p.key,p.title,p.who=key,t.title,t.who;p:SetParent(canvas)
+  p:ClearAllPoints();p:SetPoint("BOTTOM",canvas,"TOPLEFT",t.x*canvas:GetWidth(),-t.y*canvas:GetHeight());p:SetShown(t.map==mapID)
+ end
+ for key,p in pairs(pins) do if not M.db.journalPins[key] then p:Hide() end end
+end
+local function EnsureWatcher()
+ if WorldMapFrame and not watcher then watcher=CreateFrame("Frame",nil,WorldMapFrame);local elapsed=0;watcher:SetScript("OnUpdate",function(_,dt) elapsed=elapsed+dt;if elapsed>.15 then elapsed=0;Update() end end) end
+end
+function A.ShowOnMap(at,title,who)
+ if not at then M:Say("No pickup location has been mapped yet.");return end
+ if at.dungeon then M.Journal.PinPickup(at,title,who);return end
+ if not WorldMapFrame and C_AddOns and C_AddOns.LoadAddOn then pcall(C_AddOns.LoadAddOn,"Blizzard_WorldMap") end
+ if not WorldMapFrame then M:Say("The world map is unavailable.");return end
+ M:Initialize();M.db.journalPins=M.db.journalPins or {}
+ local key=at[1]..":"..string.format("%.4f:%.4f",at[2],at[3])..":"..(title or "")
+ M.db.journalPins[key]={map=at[1],x=at[2],y=at[3],title=title,who=who}
+ if M.frame then M.frame:Hide() end
+ if ShowUIPanel then ShowUIPanel(WorldMapFrame) else WorldMapFrame:Show() end
+ if WorldMapFrame.SetMapID then WorldMapFrame:SetMapID(at[1]) end
+ EnsureWatcher()
+ Update()
+end
+local login=CreateFrame("Frame");login:RegisterEvent("PLAYER_LOGIN");login:RegisterEvent("ADDON_LOADED");login:SetScript("OnEvent",function(_,event,name)
+ if event=="PLAYER_LOGIN" or name=="Blizzard_WorldMap" then M:Initialize();M.db.journalPins=M.db.journalPins or {};EnsureWatcher() end
+end)

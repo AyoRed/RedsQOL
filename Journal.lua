@@ -198,70 +198,60 @@ local function QuestRow(i)
 	qrows[i] = r
 	return r
 end
-local function FillQuestRow(r, q, y, width)
-	local A = Atlas()
-	local state, colour = State(q)
-	local done, inLog = Done(q.id), InLog(q.id)
-	r.qid = q.id
-	r:ClearAllPoints(); r:SetPoint("TOPLEFT", 0, -y); r:SetWidth(width)
-	r.stripe:SetShown(inLog)
-	r.icon:SetTexture(done and "Interface\\RaidFrame\\ReadyCheck-Ready" or inLog and "Interface\\GossipFrame\\ActiveQuestIcon" or "Interface\\GossipFrame\\AvailableQuestIcon")
-	local lr, lg, lb = A.LevelColour(q.level)
-	r.name:SetText(q.name .. "  " .. string.format("|cff%02x%02x%02x", lr * 255, lg * 255, lb * 255) .. q.level .. "|r")
-	r.name:SetTextColor(done and GREEN[1] or 0.95, done and GREEN[2] or 0.94, done and GREEN[3] or 0.92)
-	r.name:SetWidth(width - 190)
-	r.state:SetText(state); r.state:SetTextColor(colour[1], colour[2], colour[3])
-	local side = q.side == "Horde" and "  |cffe65a4dHorde|r" or q.side == "Alliance" and "  |cff5a9ae6Alliance|r" or ""
-	r.sub:SetText((q.item and ("From an item: " .. q.item) or (q.giver .. "  ·  " .. (q.at and PlaceName(q.at[1]) or q.where or ""))) .. side)
-	r.sub:SetWidth(width - 190)
-	local at = (not q.item) and q.at or nil
-	r.map.at, r.map.title, r.map.who = at, q.name, q.giver
-		-- ("Show on map" needs Red's Map, which is retired: the link shows only if that map is running)
-		local A = Atlas(); local H = A and A.Host
-		r.map:SetShown(at ~= nil)
-	local h = 40
-	local open = opened[q.id]
-	r.detail:SetShown(open and true or false)
-	local shown = 0
-	if open then
-		local out = {}
-		if q.goal then out[#out + 1] = q.goal end
-		if inLog then local pr = Progress(q.id); if pr then out[#out + 1] = pr end end
-		if q.pre then
-			out[#out + 1] = "|cff9aa0abSteps|r"
-			for i, s in ipairs(q.pre) do
-				out[#out + 1] = (Done(s[1]) and "|TInterface\\RaidFrame\\ReadyCheck-Ready:11:11|t " or ("|cff9aa0ab" .. i .. ".|r ")) .. s[2] .. "  |cff9aa0ab" .. s[3] .. (s[4] and (", " .. PlaceName(s[4][1])) or "") .. "|r"
-			end
-			out[#out + 1] = (done and "|TInterface\\RaidFrame\\ReadyCheck-Ready:11:11|t " or ("|cff9aa0ab" .. (#q.pre + 1) .. ".|r ")) .. q.name
-		end
-		if q.ends then out[#out + 1] = "|cff9aa0abHand in to|r " .. q.ends[1] .. "  |cff9aa0ab" .. (q.ends[2] and PlaceName(q.ends[2][1]) or q.ends[3] or "") .. "|r" end
-		if q.rewards then
-			local known = false
-			for _, id in ipairs(q.rewards) do if Known(id) then known = true end end
-			out[#out + 1] = "|cff9aa0ab" .. (#q.rewards > 1 and "Reward (choose one)" or "Reward") .. (known and "" or "  not known on this game client yet") .. "|r"
-		end
-		r.detail:SetWidth(width - 48); r.detail:SetText(table.concat(out, "\n"))
-		h = 44 + r.detail:GetStringHeight() + 6
-		if q.rewards then
-			for _, id in ipairs(q.rewards) do
-				if Known(id) then
-					shown = shown + 1
-					local b = r.rewards[shown]
-					if not b then b = ItemButton(r, 24); r.rewards[shown] = b end
-					local _, quality = SetItem(b, id)
-					local c = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
-					b.border:SetVertexColor(c and c.r or 1, c and c.g or 1, c and c.b or 1, 0)
-					b:ClearAllPoints(); b:SetPoint("TOPLEFT", 32 + (shown - 1) * 30, -h); b:Show()
-				end
-			end
-			if shown > 0 then h = h + 30 end
-		end
-		h = h + 4
-	end
-	for i = shown + 1, #r.rewards do r.rewards[i]:Hide() end
-	r:SetHeight(h); r:Show()
-	return h
+local function FillQuestRow(r,q,y,width)
+ local state,colour=State(q);local done,inLog=Done(q.id),InLog(q.id)
+ r.qid=q.id;r:ClearAllPoints();r:SetPoint("TOPLEFT",0,-y);r:SetWidth(width)
+ r.stripe:SetShown(inLog);r.icon:SetTexture(done and "Interface\\RaidFrame\\ReadyCheck-Ready" or inLog and "Interface\\GossipFrame\\ActiveQuestIcon" or "Interface\\GossipFrame\\AvailableQuestIcon")
+ r.name:SetText(q.name.."  "..q.level);r.name:SetTextColor(1,.82,.45);r.name:SetWidth(width-190)
+ r.state:SetText(state);r.state:SetTextColor(unpack(colour))
+ local giver=q.giver or q.item or "Inside the dungeon"
+ r.sub:SetText((q.item and "Item: " or "Quest giver: ")..giver);r.sub:SetWidth(width-190)
+ local target=q.at or q.pickup or {dungeon=sel}
+ r.map.at,r.map.title,r.map.who=target,q.name,giver
+ r.map.Set(target.dungeon and not target.x and "Show pickup area" or "Pin pickup");r.map:Show()
+ local open=opened[q.id];r.detail:SetShown(open and true or false)
+ r.actions=r.actions or {};local actionCount=0;local rewardCount=0;local h=40
+ if open then
+  local out={q.goal or ""}
+  if inLog then local p=Progress(q.id);if p then out[#out+1]=p end end
+  if q.where then out[#out+1]="Pickup: "..q.where end
+  r.detail:SetWidth(width-48);r.detail:SetText(table.concat(out,"\n"));h=44+r.detail:GetStringHeight()+8
+  local function Action(label,who,at,complete)
+   actionCount=actionCount+1
+   local a=r.actions[actionCount]
+   if not a then
+    a=CreateFrame("Button",nil,r,"BackdropTemplate");UI.Box(a);a:SetBackdropColor(.12,.065,.025,.75)
+    a.text=Text(a,"",11);a.text:SetPoint("TOPLEFT",9,-7);a.text:SetJustifyH("LEFT");a.text:SetWordWrap(true)
+    a.pin=UI.Button(a,"Pin pickup",125,function() J.ShowOnMap(a.at,a.title,a.who) end);a.pin:SetPoint("RIGHT",-7,0)
+    a:SetScript("OnClick",function() J.ShowOnMap(a.at,a.title,a.who) end)
+    r.actions[actionCount]=a
+   end
+   a.at=at;a.title=label;a.who=who
+   local location=at and at[1] and ("  |  "..PlaceName(at[1])..string.format(" %.1f, %.1f",at[2]*100,at[3]*100)) or ""
+   a.text:SetWidth(width-210);a.text:SetText((complete and "|cff66dd66[Done]|r " or "")..label.."\n|cffb8ab99"..(who or "Pickup inside the dungeon")..location.."|r")
+   a.pin.label:SetText(not a.at and "Not mapped" or a.at.dungeon and not a.at.x and "Show area" or "Pin pickup")
+   a.pin:SetEnabled(a.at~=nil)
+   local height=math.max(46,a.text:GetStringHeight()+14)
+   a:ClearAllPoints();a:SetPoint("TOPLEFT",32,-h);a:SetSize(width-48,height);a:Show();h=h+height+5
+  end
+  for i,s in ipairs(q.pre or {}) do Action("Prerequisite "..i..": "..s[2],s[3],s[4],Done(s[1])) end
+  Action("Quest: "..q.name,giver,target,done)
+  if q.ends then Action("Turn in: "..q.name,q.ends[1],q.ends[2],done) end
+  if q.rewards then
+   for _,id in ipairs(q.rewards) do if Known(id) then
+    rewardCount=rewardCount+1;local b=r.rewards[rewardCount]
+    if not b then b=ItemButton(r,24);r.rewards[rewardCount]=b end
+    SetItem(b,id);b:ClearAllPoints();b:SetPoint("TOPLEFT",32+(rewardCount-1)*30,-h);b:Show()
+   end end
+   if rewardCount>0 then h=h+32 end
+  end
+  h=h+6
+ end
+ for i=actionCount+1,#r.actions do r.actions[i]:Hide() end
+ for i=rewardCount+1,#r.rewards do r.rewards[i]:Hide() end
+ r:SetHeight(h);r:Show();return h
 end
+
 
 local function BossCard(i)
 	local c = bcards[i]
@@ -592,3 +582,31 @@ end
 
 SLASH_REDSQOLJOURNAL1="/rjournal"
 SlashCmdList.REDSQOLJOURNAL=function() J.Show() end
+
+-- Quest pickups on the journal's own dungeon maps.
+local pickupTarget
+local function PositionPickup()
+ if not pickupTarget or not ui.pickupPin then return end
+ local t=pickupTarget
+ if t.x and t.y then
+  ui.pickupPin:ClearAllPoints();ui.pickupPin:SetPoint("BOTTOM",ui.art,"TOPLEFT",t.x*ui.art:GetWidth(),-t.y*ui.art:GetHeight());ui.pickupPin:Show()
+ else ui.pickupPin:Hide() end
+end
+local fit=J.FitMap
+function J.FitMap() fit();PositionPickup() end
+local selectDungeon=J.Select
+function J.Select(id)
+ pickupTarget=nil
+ if ui.pickupPin then ui.pickupPin:Hide();ui.pickupLabel:Hide() end
+ selectDungeon(id)
+end
+function J.PinPickup(at,title,who)
+ Menu:Open("journal");J.Select(at.dungeon);J.SetTab("map");pickupTarget=at
+ if not ui.pickupPin then
+  ui.pickupPin=CreateFrame("Frame",nil,ui.art);ui.pickupPin:SetSize(26,34);ui.pickupPin:SetFrameLevel(ui.art:GetFrameLevel()+12)
+  local icon=ui.pickupPin:CreateTexture(nil,"OVERLAY");icon:SetAllPoints();icon:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
+  ui.pickupLabel=Text(ui.mapFrame,"",12,AMBER);ui.pickupLabel:SetPoint("TOPLEFT",4,0);ui.pickupLabel:SetPoint("TOPRIGHT",-4,0);ui.pickupLabel:SetJustifyH("LEFT");ui.pickupLabel:SetWordWrap(true)
+ end
+ ui.pickupLabel:SetText((title or "Quest pickup").."\n"..(who or "Inside the dungeon")..(at.x and "" or "\nPickup area: inside this dungeon; exact spawn is not mapped."));ui.pickupLabel:Show()
+ PositionPickup()
+end
