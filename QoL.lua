@@ -40,7 +40,7 @@ local DEFAULTS={reload={enabled=true},
  totemBar={enabled=true,size=38,space=4,vertical=false,showCall=true,showRecall=true,colorBorders=true,borderSize=2,timer=true,timerSize=12,choice={}},
  campfire={enabled=true,alertNearby=true,warnEnding=true,warnAt=60,sound=false,timer=true,iconSize=90,textSize=16,onlyLow=false,lowMinutes=5,soundKey="warn",ringColor={.2,.62,.38}},
  -- Top bar (Modules\TopBar.lua): each button goes "left", "right" or "off".
- topbar={enabled=false,showClock=true,use24h=false,showSystem=true,systemTooltip=true,iconSize=22,clockSize=16,sysSize=10,bgAlpha=.85,outline=false,
+ topbar={enabled=false,showClock=true,use24h=false,showSystem=true,systemTooltip=true,iconSize=22,clockSize=16,sysSize=10,bgAlpha=.85,showBorders=true,outline=false,
   hideInCombat=false,mouseover=false,fadedAlpha=.2,
   layout={friends="left",guild="left",hearth="right",reds="right",addons="off",journal="off",trainer="right",junk="off",map="off",bags="off"}},
  quests={rewardMarker=true,automation=true,stepAside=true,pauseShift=true,skipTrivial=true,lootChat=true,lootParty=true,doneSound=true,doneChat=true,doneSoundKey="ding"},

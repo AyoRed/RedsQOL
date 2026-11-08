@@ -8,7 +8,7 @@ A quality-of-life addon for WoW Forever by Red, with a dark brown and amber sett
 - Trainer spell lists and level-up reminders.
 - Themed dungeon journal with quests, boss abilities, loot and maps for four dungeons.
 - Campfire reminders, bonus tracking, timer ring and warning sounds.
-- Customizable top bar with clock, FPS/latency and shortcuts.
+- Customizable top bar with clock, FPS/latency and shortcuts, plus optional borderless icons.
 - Movable QOL displays and a one-click Reload UI button.
 - Normal dragging of Blizzard windows such as spellbook and talents, separate from QOL placement.
 
@@ -17,7 +17,7 @@ A quality-of-life addon for WoW Forever by Red, with a dark brown and amber sett
 Use Red's UI Updater to install or update Reds QOL automatically:
 https://github.com/AyoRed/RedsUI/releases/latest
 
-For manual installation, download `RedsQOL-1.3.4.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
+For manual installation, download `RedsQOL-1.3.5.zip` from this repository's Releases and extract the `RedsQOL` folder into your game's `Interface/AddOns` directory. Restart WoW after a first installation.
 
 ## Controls
 

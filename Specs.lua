@@ -55,6 +55,7 @@ local SPECS={
   {type="slider",path="topbar.clockSize",label="Clock size",min=10,max=30,step=1,when=function(s) return s.topbar.enabled and s.topbar.showClock end},
   {type="slider",path="topbar.sysSize",label="FPS and latency size",min=6,max=18,step=1,when=function(s) return s.topbar.enabled and s.topbar.showSystem end},
   {type="header",label="Look",when=function(s) return s.topbar.enabled end},
+  {type="check",path="topbar.showBorders",label="Show icon borders and background",when=function(s) return s.topbar.enabled end},
   {type="slider",path="topbar.bgAlpha",label="Bar opacity",min=0,max=1,step=.05,percent=true,when=function(s) return s.topbar.enabled end},
   {type="check",path="topbar.outline",label="Outline the text",when=function(s) return s.topbar.enabled end},
   {type="header",label="Visibility",when=function(s) return s.topbar.enabled end},

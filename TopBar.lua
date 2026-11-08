@@ -220,11 +220,17 @@ end
 
 -- the panels follow the menu's look, each with a thin line of Red's red (gold-brown on parchment) along the bottom
 function TB.Skin()
+ local o=Opt()
  for _,p in pairs(pills) do
-  UI.Paper(p,Look(),Opt().bgAlpha);UI.RedrawButtons(p)
-  if Look()=="parchment" then p.line:SetColorTexture(.62,.42,.2,1) else p.line:SetColorTexture(.78,.18,.12,1) end
-  -- Forever Bronze: Paper dresses the panel in the bronze frame, so the red line goes
-  p.line:SetShown(Look()~="bronze")
+  if o.showBorders~=false then
+   -- Restore the panel when switching back from icons only.
+   UI.Box(p);UI.Paper(p,Look(),o.bgAlpha);UI.RedrawButtons(p)
+   if Look()=="parchment" then p.line:SetColorTexture(.62,.42,.2,1) else p.line:SetColorTexture(.78,.18,.12,1) end
+   p.line:SetShown(Look()~="bronze")
+  else
+   -- Keep the group frame and its clickable icons, without panel artwork.
+   p:SetBackdrop(nil);p.line:Hide()
+  end
  end
 end
 -- lays the whole bar out again (out of combat: it holds a secure button)
